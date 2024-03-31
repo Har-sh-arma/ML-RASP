@@ -1,0 +1,8 @@
+.venv/*
+
+*.key
+*.crt
+*.csr
+
+alias.txt
+
