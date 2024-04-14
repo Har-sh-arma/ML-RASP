@@ -6,6 +6,7 @@ import logging
 import os
 import ssl
 import uuid
+import json
 import time
 from aiohttp import web
 from aiortc import MediaStreamTrack, RTCPeerConnection, RTCSessionDescription
@@ -17,6 +18,7 @@ ROOT = os.path.dirname(__file__)
 logger = logging.getLogger("pc")
 pcs = set()
 relay = MediaRelay()
+frame_ctr = 0
 
 class VideoTransformTrack(MediaStreamTrack):
     """
@@ -31,9 +33,15 @@ class VideoTransformTrack(MediaStreamTrack):
         self.transform = transform
 
     async def recv(self):
+        global frame_ctr
         frame = await self.track.recv()
-        img = frame.to_ndarray(format="bgr24")
-        visual.applyTransform(img, "Text Hello How u doin")
+        if(frame_ctr ==0):
+            img = frame.to_ndarray(format="bgr24")
+            try:
+                visual.applyTransform(img, "Text Hello How u doin")
+            except IndexError:
+                pass
+        frame_ctr = (frame_ctr+1)%2
         return frame
 
 async def index(request):

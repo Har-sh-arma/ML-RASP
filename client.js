@@ -44,46 +44,7 @@ const negotiate = () => {
 
 const start = () => {
     pc = new RTCPeerConnection();
-
-    try {
-        // accelerometer = new Accelerometer({ referenceFrame: "device" , frequency:60});
-        accelerometer = new LinearAccelerationSensor({ frequency: 30 });
-        accelerometer.addEventListener("error", (event) => {
-            // Handle runtime errors.
-            if (event.error.name === "NotAllowedError") {
-                // Branch to code for requesting permission.
-            } else if (event.error.name === "NotReadableError") {
-                console.log("Cannot connect to the sensor.");
-            }
-        });
-        dc = pc.createDataChannel('chat');
-        dc.onclose = function () {
-            clearInterval(dcInterval);
-        };
-        dc.onopen = function () {
-            console.log("Connection opened !!!");
-        };
-        accelerometer.addEventListener("reading", () => {
-            let d = new Date();
-            prev_time = curr_time;
-            curr_time = d.getTime();
-            // console.log(`${curr_time - prev_time}`);
-            message = `${accelerometer.x.toFixed(4)*100} ${accelerometer.y.toFixed(4)*100} ${accelerometer.z.toFixed(4)*100} ${curr_time-prev_time}`
-            dc.send(message);
-            // document.getElementById("acc").innerHTML = `<p>x: ${accelerometer.x}</p><p>y: ${accelerometer.y}</p><p>z: ${accelerometer.z}</p>`
-        });
-        accelerometer.start();
-    } catch (error) {
-        // Handle construction errors.
-        if (error.name === "SecurityError") {
-            // See the note above about permissions policy.
-            console.log("Sensor construction was blocked by a permissions policy.");
-        } else if (error.name === "ReferenceError") {
-            console.log("Sensor is not supported by the User Agent.");
-        } else {
-            throw error;
-        }
-    }
+    
     if (typeof currentStream !== 'undefined') {
         stopMediaTracks(currentStream);
       }
